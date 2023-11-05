@@ -4,4 +4,5 @@ import { generateRandomComment, getRandomInt } from './util.js';
 import { createPhotosData } from './data.js';
 
 const photos = createPhotosData();
+
 console.log(photos);
