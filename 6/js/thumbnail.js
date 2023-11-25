@@ -1,5 +1,5 @@
 // Модуль отвечающий за отрисовку миниатюр
-const PictureModule = (function () {
+export const PictureModule = (function () {
   // Функция для создания DOM-элемента фотографии
   function createPictureElement(pictureData) {
     const pictureTemplate = document.querySelector('#picture').content.cloneNode(true);
