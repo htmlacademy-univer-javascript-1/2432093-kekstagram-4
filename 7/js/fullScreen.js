@@ -23,13 +23,13 @@ export const FullScreenModule = (function () {
       const avatarElement = document.createElement('img');
       avatarElement.classList.add('social__picture');
       avatarElement.src = commentData.avatar;
-      avatarElement.alt = commentData.commentatorName;
+      avatarElement.alt = commentData.name;
       avatarElement.width = 35;
       avatarElement.height = 35;
 
       const textElement = document.createElement('p');
       textElement.classList.add('social__text');
-      textElement.textContent = commentData.text;
+      textElement.textContent = commentData.message;
 
       commentElement.appendChild(avatarElement);
       commentElement.appendChild(textElement);
@@ -64,6 +64,8 @@ export const FullScreenModule = (function () {
   function closeFullScreen() {
     const fullScreenElement = document.querySelector('.big-picture');
     fullScreenElement.classList.add('hidden');
+    closeBtn.removeEventListener("click", () => { closeFullScreen(); });
+    document.removeEventListener("keydown", (evt) => { closeFullScreen(); });
   }
 
   return {
