@@ -1,6 +1,8 @@
 import { generateRandomComment } from './data.js';
 
 export const FullScreenModule = (function () {
+  let closeBtn;
+
   function updateFullScreenContent(photos) {
     const fullScreenElement = document.querySelector('.big-picture');
 
@@ -49,23 +51,22 @@ export const FullScreenModule = (function () {
 
     updateFullScreenContent(photos);
 
-    document.addEventListener('keydown', (evt) => {
-      if (evt.key === 'Escape') {
-        closeFullScreen();
-      }
-    });
-
-    const closeBtn = document.querySelector('.big-picture__cancel');
-    closeBtn.addEventListener('click', () => {
-      closeFullScreen();
-    });
+    document.addEventListener('keydown', handleKeyDown);
+    closeBtn = document.querySelector('.big-picture__cancel');
+    closeBtn.addEventListener('click', closeFullScreen);
   }
 
   function closeFullScreen() {
     const fullScreenElement = document.querySelector('.big-picture');
     fullScreenElement.classList.add('hidden');
-    closeBtn.removeEventListener("click", () => { closeFullScreen(); });
-    document.removeEventListener("keydown", (evt) => { closeFullScreen(); });
+    closeBtn.removeEventListener("click", closeFullScreen);
+    document.removeEventListener("keydown", handleKeyDown);
+  }
+
+  function handleKeyDown(evt) {
+    if (evt.key === 'Escape') {
+      closeFullScreen();
+    }
   }
 
   return {
