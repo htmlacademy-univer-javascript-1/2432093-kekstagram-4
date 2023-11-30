@@ -1,5 +1,6 @@
 //Модуль создания данных
 import { getRandomInt } from './util.js';
+import { getRandomInt } from './util.js';
 
 const commentsList = [
   'Всё отлично!',
@@ -52,4 +53,4 @@ export function generateRandomComment() {
   const message = commentsList[getRandomInt(0, commentsList.length - 1)];
   const name = 'Пользователь ' + id;
   return { id, avatar, message, name };
-}
+} // Генерируем случайный комментарий

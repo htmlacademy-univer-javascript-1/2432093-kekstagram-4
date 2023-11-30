@@ -54,12 +54,12 @@ console.log(isPalindrome('Лёша на полке клопа нашёл ')); //
 
 
 function extractNumbers(inputString) {
-  const digitArray = inputString.match(/\d/g); 
+  const digitArray = inputString.match(/\d/g);
   if (!digitArray) {
-    return NaN; 
+    return NaN;
   }
-  const digitString = digitArray.join(''); 
-  return parseInt(digitString, 10); 
+  const digitString = digitArray.join('');
+  return parseInt(digitString, 10);
 }
 extractNumbers('2023 год');            // 2023
 extractNumbers('ECMAScript 2022');     // 2022
