@@ -2,6 +2,8 @@ import { generateRandomComment } from './data.js';
 
 export const FullScreenModule = (function () {
   let closeBtn;
+  let commentsToShow = 5;
+  let loadedComments = 0;
 
   function updateFullScreenContent(photos) {
     const fullScreenElement = document.querySelector('.big-picture');
@@ -40,13 +42,57 @@ export const FullScreenModule = (function () {
     });
 
     fullScreenElement.classList.remove('hidden');
+    const commentsLoaderElement = document.querySelector('.comments-loader');
+    commentsLoaderElement.classList.remove('hidden');
+    commentsLoaderElement.addEventListener('click', () => loadMoreComments(photos));
+  }
+
+  function loadMoreComments(photos) {
+    const commentsContainer = document.querySelector('.social__comments');
+    const commentsCountElement = document.querySelector('.social__comment-count');
+    const commentsLoaderElement = document.querySelector('.comments-loader');
+
+    commentsToShow += 5;
+    updateFullScreenContent(photos);
+
+    if (commentsToShow >= photos.comments.length) {
+      commentsToShow = photos.comments.length;
+      commentsLoaderElement.classList.add('hidden');
+    }
+
+    commentsCountElement.textContent = `${commentsToShow} из ${photos.comments.length} комментариев`;
+
+    const commentsToRender = photos.comments.slice(loadedComments, commentsToShow);
+
+    commentsToRender.forEach(commentData => {
+      const commentElement = document.createElement('li');
+      commentElement.classList.add('social__comment');
+
+      const avatarElement = document.createElement('img');
+      avatarElement.classList.add('social__picture');
+      avatarElement.src = commentData.avatar;
+      avatarElement.alt = commentData.name;
+      avatarElement.width = 35;
+      avatarElement.height = 35;
+
+      const textElement = document.createElement('p');
+      textElement.classList.add('social__text');
+      textElement.textContent = commentData.message;
+
+      commentElement.appendChild(avatarElement);
+      commentElement.appendChild(textElement);
+
+      commentsContainer.appendChild(commentElement);
+    });
+
+    loadedComments = commentsToShow;
   }
 
   function openFullScreen(photos) {
+    const initialCommentsCount = 5;
+
     if (photos.comments.length === 0) {
-      for (let i = 0; i < 5; i++) {
-        photos.comments.push(generateRandomComment());
-      }
+      photos.comments = generateRandomComments(initialCommentsCount);
     }
 
     updateFullScreenContent(photos);
