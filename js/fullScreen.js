@@ -64,7 +64,7 @@ export const FullScreenModule = (function () {
 
     const commentsToRender = photos.comments.slice(loadedComments, commentsToShow);
 
-    commentsToRender.forEach(commentData => {
+    commentsToRender.forEach((commentData) => {
       const commentElement = document.createElement('li');
       commentElement.classList.add('social__comment');
 
@@ -89,10 +89,8 @@ export const FullScreenModule = (function () {
   }
 
   function openFullScreen(photos) {
-    const initialCommentsCount = 5;
-
     if (photos.comments.length === 0) {
-      photos.comments = generateRandomComments(initialCommentsCount);
+      photos.comments = generateRandomComment();
     }
 
     updateFullScreenContent(photos);
