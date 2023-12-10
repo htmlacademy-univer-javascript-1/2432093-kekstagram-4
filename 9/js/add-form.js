@@ -1,6 +1,14 @@
 import { resetScale } from './scale.js';
 import { reset } from './effect.js';
 
+const validSymbolsRegex = /^[a-zA-Z0-9_]+$/;
+const hashtagMaxCount = 5;
+const errorText = {
+  NOT_VALID: 'Хэштег не является допустимым',
+  REACHED_MAX_COUNT: 'Достигнуто максимальное количество хэштегов',
+  NOT_UNIQUE: 'Хэштеги должны быть уникальными',
+};
+
 const bodyElement = document.querySelector('body');
 const uploadFormElement = document.querySelector('.img-upload__form');
 const uploadFileInput = uploadFormElement.querySelector('#upload-file');
