@@ -11,7 +11,7 @@ export const PictureModule = (function () {
     imgElement.alt = pictureData.description;
 
     pictureElement.querySelector('.picture__likes').textContent = pictureData.likes;
-    pictureElement.querySelector('.picture__comments').textContent = pictureData.comments.lenght;
+    pictureElement.querySelector('.picture__comments').textContent = pictureData.comments.length;
 
     return pictureElement;
   }
