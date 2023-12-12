@@ -1,6 +1,6 @@
 const DEFAULT_SCALE = 100;
-const SCALE_STEP = 10;
-const MINIMUM_SCALE = 0;
+const SCALE_STEP = 25;
+const MINIMUM_SCALE = 25;
 const MAXIMUM_SCALE = 100;
 
 const imageUploadContainer = document.querySelector('.img-upload');

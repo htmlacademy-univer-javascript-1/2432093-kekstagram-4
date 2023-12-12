@@ -1,6 +1,5 @@
 //Модуль создания данных
 import { getRandomInt } from './util.js';
-import { getRandomInt } from './util.js';
 
 const commentsList = [
   'Всё отлично!',

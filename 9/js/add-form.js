@@ -1,7 +1,7 @@
 import { resetScale } from './scale.js';
-import { reset } from './effect.js';
+import { reset } from './effects.js';
 
-const validSymbolsRegex = /^[a-zA-Z0-9_]+$/;
+const validSymbolsRegex = /^[a-zA-Z0-9_#]+$/;
 const hashtagMaxCount = 5;
 const errorText = {
   NOT_VALID: 'Хэштег не является допустимым',

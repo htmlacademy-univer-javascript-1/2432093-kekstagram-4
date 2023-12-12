@@ -1,8 +1,8 @@
 import { generateRandomComment } from './data.js';
 
 export const FullScreenModule = (function () {
-  const fullScreenElement = document.querySelector('.full-screen');
-  const fullScreenImgElement = fullScreenElement.querySelector('.full-screen__img img');
+  const fullScreenElement = document.querySelector('.big-picture');
+  const fullScreenImgElement = fullScreenElement.querySelector('.big-picture__img img');
   const fullScreenLikesCountElement = fullScreenElement.querySelector('.likes-count');
   const fullScreenSocialCaptionElement = fullScreenElement.querySelector('.social__caption');
 
