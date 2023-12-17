@@ -5,6 +5,8 @@
 import { createPhotosData } from './data.js';
 import { FullScreenModule } from './fullScreen.js';
 import { PictureModule } from './thumbnail.js';
+import './add-form.js';
+import './scale.js';
 
 const photos = createPhotosData();
 
