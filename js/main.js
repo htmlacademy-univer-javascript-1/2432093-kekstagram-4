@@ -1,20 +1,26 @@
-//Файл - точка входа
-//Данный импорт нужен был в прошлом задании
-//import { generateRandomComment, getRandomInt } from './util.js';
-//Возможно лишнее сейчас, тк импорт для createPhotosData написан в data.js
-import { createPhotosData } from './data.js';
 import { FullScreenModule } from './fullScreen.js';
 import { PictureModule } from './thumbnail.js';
-import './add-form.js';
-import './scale.js';
+import { setOnFormSubmit, hideImageModal } from './add-form.js';
+import { showError, showSuccess } from './message.js';
+import { getData, sendData } from './api.js';
 
-const photos = createPhotosData();
+setOnFormSubmit(async (data) => {
+  try {
+    await sendData(data);
+    hideImageModal();
+    showSuccess();
+  } catch (error) {
+    showError();
+  }
+});
 
-PictureModule().renderPictures(photos);
+getData().then((pictures) => {
+  PictureModule().renderPictures(photos);
 
-const thumbnailElements = document.querySelectorAll('.picture');
-thumbnailElements.forEach((thumbnail, index) => {
-  thumbnail.addEventListener('click', () => {
-    FullScreenModule.openFullScreen(photos[index]);
+  const thumbnailElements = document.querySelectorAll('.picture');
+  thumbnailElements.forEach((thumbnail, index) => {
+    thumbnail.addEventListener('click', () => {
+      FullScreenModule.openFullScreen(photos[index]);
+    });
   });
 });
