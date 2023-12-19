@@ -45,3 +45,4 @@ const sendData = async (body) => {
 };
 
 export { getData, sendData };
+//сделано ранее
