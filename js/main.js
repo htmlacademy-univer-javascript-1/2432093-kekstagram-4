@@ -3,6 +3,8 @@ import { PictureModule } from './thumbnail.js';
 import { setOnFormSubmit, hideImageModal } from './add-form.js';
 import { showError, showSuccess } from './message.js';
 import { getData, sendData } from './api.js';
+import { showFilterButtons } from './filter.js';
+import { debounce } from './utils.js';
 
 setOnFormSubmit(async (data) => {
   try {
@@ -17,10 +19,7 @@ setOnFormSubmit(async (data) => {
 getData().then((pictures) => {
   PictureModule().renderPictures(photos);
 
-  const thumbnailElements = document.querySelectorAll('.picture');
-  thumbnailElements.forEach((thumbnail, index) => {
-    thumbnail.addEventListener('click', () => {
-      FullScreenModule.openFullScreen(photos[index]);
-    });
-  });
+  const debouncedRenderThumbnail = debounce(renderThumbnail);
+
+  showFilterButtons(pictures, debouncedRenderThumbnail);
 });
