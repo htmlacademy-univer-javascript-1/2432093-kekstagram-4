@@ -1,4 +1,3 @@
-import { FullScreenModule } from './fullScreen.js';
 import { PictureModule } from './thumbnail.js';
 import { setOnFormSubmit, hideImageModal } from './add-form.js';
 import { showError, showSuccess } from './message.js';
@@ -12,6 +11,7 @@ setOnFormSubmit(async (data) => {
     hideImageModal();
     showSuccess();
   } catch (error) {
+    hideImageModal();
     showError();
   }
 });

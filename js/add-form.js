@@ -1,6 +1,11 @@
 import { resetScale } from './scaling.js';
 import { resetEffects } from './effects.js';
 
+const SubmitButtonText = {
+  IDLE: 'Сохранить',
+  SENDING: 'Сохраняю...'
+};
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const VALID_SYMBOLS_REGEX = /^[a-zA-Z0-9_#]+$/;
 const HASHTAG_MAX_COUNT = 5;
 const ERROR_TEXT = {
@@ -20,6 +25,7 @@ const hashtagsFieldElement = uploadFormElement.querySelector('.text__hashtags');
 const commentsFieldElement = uploadFormElement.querySelector('.text__description');
 
 const imagePreviewElement = document.querySelector('.img-upload__preview img');
+const effectsPreview = document.querySelectorAll('.effects__preview');
 
 const pristineForm = new Pristine(uploadFormElement, {
   classTo: 'img-upload__field-wrapper',
@@ -88,15 +94,31 @@ const showImageModal = () => {
   closeButtonElement.addEventListener('click', hideImageModal);
 };
 
-uploadFileInput.addEventListener('input', showImageModal);
-uploadFileInput.addEventListener('change', (event) => {
-  const file = event.target.files[0];
+const changeEffectPreviewImage = (newImage) => {
+  effectsPreview.forEach((effectPreview) => {
+    effectPreview.style.backgroundImage = `url('${newImage}')`;
+  });
+};
 
-  if (file) {
+const showImage = () => {
+  const file = uploadFile.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const isValidType = FILE_TYPES.some((fileType) => fileName.endsWith(fileType));
+
+  if (file && isValidType) {
     const imageUrl = URL.createObjectURL(file);
     imagePreviewElement.src = imageUrl;
+    changeEffectPreviewImage(imageUrl);
   }
-});
+};
+
+const uploadOnChange = (evt) => {
+  showImage(evt);
+  showImageModal();
+};
+
+uploadFile.addEventListener('change', uploadOnChange);
 
 commentsFieldElement.addEventListener('keydown', (evt) => {
   if (evt.key === 'Escape') {
@@ -110,12 +132,24 @@ hashtagsFieldElement.addEventListener('keydown', (evt) => {
   }
 });
 
+const blockSubmitButton = () => {
+  buttonCloseOverlay.disabled = true;
+  buttonCloseOverlay.textContent = SubmitButtonText.SENDING;
+};
+
+const unblockSubmitButton = () => {
+  buttonCloseOverlay.disabled = false;
+  buttonCloseOverlay.textContent = SubmitButtonText.IDLE;
+};
+
 const setOnFormSubmit = (callback) => {
   uploadFormElement.addEventListener('submit', async (evt) => {
     evt.preventDefault();
 
     if (pristineForm.validate()) {
+      blockSubmitButton();
       await callback(new FormData(uploadFormElement));
+      unblockSubmitButton();
     }
   });
 };
