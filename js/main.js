@@ -1,25 +1,13 @@
-import { PictureModule } from './thumbnail.js';
-import { setOnFormSubmit, hideImageModal } from './add-form.js';
-import { showError, showSuccess } from './message.js';
-import { getData, sendData } from './api.js';
+import { renderThumbnail } from './render-thumbnail.js';
+import { onFormSubmit } from './add-form.js';
+import { getData } from './api.js';
 import { showFilterButtons } from './filter.js';
 import { debounce } from './utils.js';
 
-setOnFormSubmit(async (data) => {
-  try {
-    await sendData(data);
-    hideImageModal();
-    showSuccess();
-  } catch (error) {
-    hideImageModal();
-    showError();
-  }
-});
-
 getData().then((pictures) => {
-  PictureModule().renderPictures(photos);
-
   const debouncedRenderThumbnail = debounce(renderThumbnail);
-
+  renderThumbnail(pictures);
   showFilterButtons(pictures, debouncedRenderThumbnail);
 });
+
+onFormSubmit();

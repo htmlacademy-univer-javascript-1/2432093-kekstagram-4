@@ -1,10 +1,4 @@
-const FILTER_PICTURES_COUNT = 10;
-
-const Filters = {
-  DEFAULT: 'filter-default',
-  RANDOM: 'filter-random',
-  DISCUSSED: 'filter-discussed',
-};
+import { Filters, FILTER_PICTURES_COUNT } from './constant.js';
 
 const filterFormElement = document.querySelector('.img-filters');
 const activeClass = 'img-filters__button--active';
