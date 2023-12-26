@@ -1,40 +1,31 @@
-import { resetScale } from './scaling.js';
-import { resetEffects } from './effects.js';
+import { HASHTAG_MAX_COUNT, VALID_SYMBOLS, ErrorText, SubmitButtonText, FILE_TYPES } from './constant.js';
+import { resetScale } from './scale.js';
+import { reset } from './effect.js';
+import { sendData } from './api.js';
+import { showErrorMessage, showSuccessMessage } from './message.js';
 
-const SubmitButtonText = {
-  IDLE: 'Сохранить',
-  SENDING: 'Сохраняю...'
-};
-const FILE_TYPES = ['jpg', 'jpeg', 'png'];
-const VALID_SYMBOLS_REGEX = /^[a-zA-Z0-9_#]+$/;
-const HASHTAG_MAX_COUNT = 5;
-const ERROR_TEXT = {
-  NOT_VALID: 'Хэштег не является допустимым',
-  REACHED_MAX_COUNT: 'Достигнуто максимальное количество хэштегов',
-  NOT_UNIQUE: 'Хэштеги должны быть уникальными',
-};
 
-const bodyElement = document.querySelector('body');
-const uploadFormElement = document.querySelector('.img-upload__form');
-const uploadFileInput = uploadFormElement.querySelector('#upload-file');
+const body = document.querySelector('body');
+const uploadForm = document.querySelector('.img-upload__form');
+const uploadFile = uploadForm.querySelector('#upload-file');
 
-const imageOverlayElement = uploadFormElement.querySelector('.img-upload__overlay');
-const closeButtonElement = uploadFormElement.querySelector('#upload-cancel');
+const imageOverlay = uploadForm.querySelector('.img-upload__overlay');
+const buttonCloseOverlay = uploadForm.querySelector('#upload-cancel');
 
-const hashtagsFieldElement = uploadFormElement.querySelector('.text__hashtags');
-const commentsFieldElement = uploadFormElement.querySelector('.text__description');
+const hashtagsField = uploadForm.querySelector('.text__hashtags');
+const commentsField = uploadForm.querySelector('.text__description');
 
-const imagePreviewElement = document.querySelector('.img-upload__preview img');
+const imagePreview = document.querySelector('.img-upload__preview img');
 const effectsPreview = document.querySelectorAll('.effects__preview');
 
-const pristineForm = new Pristine(uploadFormElement, {
+const pristine = new Pristine(uploadForm, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
 });
 
 const getSplitHashtags = (tags) => tags.trim().split(' ').filter((tag) => tag.trim().length);
 
-const isHashtagValid = (value) => getSplitHashtags(value).every((tag) => VALID_SYMBOLS_REGEX.test(tag));
+const isHashtagValid = (value) => getSplitHashtags(value).every((tag) => VALID_SYMBOLS.test(tag));
 
 const hasReachedHashtagLimit = (value) => getSplitHashtags(value).length <= HASHTAG_MAX_COUNT;
 
@@ -43,55 +34,55 @@ const areHashtagsUnique = (value) => {
   return lowerCaseTags.length === new Set(lowerCaseTags).size;
 };
 
-pristineForm.addValidator(
-  hashtagsFieldElement,
+pristine.addValidator(
+  hashtagsField,
   isHashtagValid,
-  ERROR_TEXT.NOT_VALID,
+  ErrorText.NOT_VALID,
   3,
   true
 );
 
-pristineForm.addValidator(
-  hashtagsFieldElement,
+pristine.addValidator(
+  hashtagsField,
   hasReachedHashtagLimit,
-  ERROR_TEXT.REACHED_MAX_COUNT,
+  ErrorText.REACHED_MAX_COUNT,
   2,
   true
 );
 
-pristineForm.addValidator(
-  hashtagsFieldElement,
+pristine.addValidator(
+  hashtagsField,
   areHashtagsUnique,
-  ERROR_TEXT.NOT_UNIQUE,
+  ErrorText.NOT_UNIQUE,
   1,
   true
 );
 
 const hideImageModal = () => {
-  imageOverlayElement.classList.add('hidden');
-  bodyElement.classList.remove('modal-open');
+  imageOverlay.classList.add('hidden');
+  body.classList.remove('modal-open');
 
-  uploadFormElement.reset();
-  pristineForm.reset();
-  closeButtonElement.removeEventListener('click', hideImageModal);
+  uploadForm.reset();
+  pristine.reset();
+  buttonCloseOverlay.removeEventListener('click', hideImageModal);
 };
 
-const documentOnKeydown = (evt) => {
+const onDocumentKeydown = (evt) => {
   if (evt.key === 'Escape') {
     evt.preventDefault();
     hideImageModal();
-    document.removeEventListener('keydown', documentOnKeydown);
+    document.removeEventListener('keydown', onDocumentKeydown);
   }
 };
 
 const showImageModal = () => {
-  imageOverlayElement.classList.remove('hidden');
-  bodyElement.classList.add('modal-open');
+  imageOverlay.classList.remove('hidden');
+  body.classList.add('modal-open');
   resetScale();
-  resetEffects();
+  reset();
 
-  document.addEventListener('keydown', documentOnKeydown);
-  closeButtonElement.addEventListener('click', hideImageModal);
+  document.addEventListener('keydown', onDocumentKeydown);
+  buttonCloseOverlay.addEventListener('click', hideImageModal);
 };
 
 const changeEffectPreviewImage = (newImage) => {
@@ -108,25 +99,25 @@ const showImage = () => {
 
   if (file && isValidType) {
     const imageUrl = URL.createObjectURL(file);
-    imagePreviewElement.src = imageUrl;
+    imagePreview.src = imageUrl;
     changeEffectPreviewImage(imageUrl);
   }
 };
 
-const uploadOnChange = (evt) => {
+const onUploadChange = (evt) => {
   showImage(evt);
   showImageModal();
 };
 
-uploadFile.addEventListener('change', uploadOnChange);
+uploadFile.addEventListener('change', onUploadChange);
 
-commentsFieldElement.addEventListener('keydown', (evt) => {
+commentsField.addEventListener('keydown', (evt) => {
   if (evt.key === 'Escape') {
     evt.stopPropagation();
   }
 });
 
-hashtagsFieldElement.addEventListener('keydown', (evt) => {
+hashtagsField.addEventListener('keydown', (evt) => {
   if (evt.key === 'Escape') {
     evt.stopPropagation();
   }
@@ -142,16 +133,26 @@ const unblockSubmitButton = () => {
   buttonCloseOverlay.textContent = SubmitButtonText.IDLE;
 };
 
-const setOnFormSubmit = (callback) => {
-  uploadFormElement.addEventListener('submit', async (evt) => {
+const onFormSubmit = () => {
+  uploadForm.addEventListener('submit', async (evt) => {
     evt.preventDefault();
+    const isValid = pristine.validate();
 
-    if (pristineForm.validate()) {
+    if (isValid) {
+      const formData = new FormData(evt.target);
       blockSubmitButton();
-      await callback(new FormData(uploadFormElement));
-      unblockSubmitButton();
+      sendData(formData)
+        .then(() => {
+          hideImageModal();
+          showSuccessMessage();
+        })
+        .catch(() => {
+          hideImageModal();
+          showErrorMessage();
+        })
+        .finally(unblockSubmitButton);
     }
   });
 };
 
-export { setOnFormSubmit, hideImageModal };
+export { onFormSubmit, hideImageModal, showImageModal };
