@@ -1,36 +1,34 @@
-const DEFAULT_SCALE = 100;
-const SCALE_STEP = 25;
-const MINIMUM_SCALE = 25;
-const MAXIMUM_SCALE = 100;
+import { SCALE_STEP, MIN_SCALE, MAX_SCALE, DEFAULT_SCALE } from './constant.js';
 
-const imageUploadContainer = document.querySelector('.img-upload');
-const scaleInput = imageUploadContainer.querySelector('.scale__control--value');
-const decreaseScaleButton = imageUploadContainer.querySelector('.scale__control--smaller');
-const increaseScaleButton = imageUploadContainer.querySelector('.scale__control--bigger');
-const previewImage = imageUploadContainer.querySelector('.img-upload__preview img');
+const modal = document.querySelector('.img-upload');
+const scaleInput = modal.querySelector('.scale__control--value');
+
+const makeSmallerButton = modal.querySelector('.scale__control--smaller');
+const makeBiggerButton = modal.querySelector('.scale__control--bigger');
+const image = modal.querySelector('.img-upload__preview img');
 
 scaleInput.value = `${DEFAULT_SCALE}%`;
 
-const updateScale = (value) => {
+const scaleImage = (value) => {
   scaleInput.value = `${value}%`;
-  previewImage.style.transform = `scale(${value / 100})`;
+  image.style.transform = `scale(${value / 100})`;
 };
 
-const decreaseImageScale = () => {
-  const currentScale = Math.max(parseInt(scaleInput.value, 10) - SCALE_STEP, MINIMUM_SCALE);
-  updateScale(currentScale);
+const makeImageSmaller = () => {
+  const currentValue = Math.max(parseInt(scaleInput.value, 10) - SCALE_STEP, MIN_SCALE);
+  scaleImage(currentValue);
 };
 
-const increaseImageScale = () => {
-  const currentScale = Math.min(parseInt(scaleInput.value, 10) + SCALE_STEP, MAXIMUM_SCALE);
-  updateScale(currentScale);
+const makeImageBigger = () => {
+  const currentValue = Math.min(parseInt(scaleInput.value, 10) + SCALE_STEP, MAX_SCALE);
+  scaleImage(currentValue);
 };
 
 const resetScale = () => {
-  updateScale(DEFAULT_SCALE);
+  scaleImage(DEFAULT_SCALE);
 };
 
-decreaseScaleButton.addEventListener('click', decreaseImageScale);
-increaseScaleButton.addEventListener('click', increaseImageScale);
+makeSmallerButton.addEventListener('click', makeImageSmaller);
+makeBiggerButton.addEventListener('click', makeImageBigger);
 
 export { resetScale };
