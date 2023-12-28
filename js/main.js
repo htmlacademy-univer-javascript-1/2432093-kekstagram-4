@@ -1,13 +1,14 @@
-import { renderThumbnail } from './render-thumbnail.js';
-import { onFormSubmit } from './add-form.js';
-import { getData } from './api.js';
-import { showFilterButtons } from './filter.js';
-import { debounce } from './utils.js';
+import {renderUserPhotos} from './pictures.js';
+import {initEffects} from './effects.js';
+import {closeUploadPopup} from './form.js';
+import {submitForm} from './form.js';
+import {getData} from './api.js';
+import {showFilteredPictures} from './filter.js';
 
-getData().then((pictures) => {
-  const debouncedRenderThumbnail = debounce(renderThumbnail);
-  renderThumbnail(pictures);
-  showFilterButtons(pictures, debouncedRenderThumbnail);
+getData((pictures) => {
+  renderUserPhotos(pictures);
+  showFilteredPictures(pictures);
 });
 
-onFormSubmit();
+submitForm(closeUploadPopup);
+initEffects();
