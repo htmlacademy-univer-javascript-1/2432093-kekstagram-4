@@ -1,19 +1,34 @@
-import { URL, Method, ServerErrorText, Route } from './constant.js';
-
-const load = (route, errorText, method = Method.GET, body = null) =>
-  fetch(`${URL}${route}`, { method, body })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Произошла ошибка ${response.status}: ${response.statusText}`);
-      }
-      return response.json();
+import {showAlert} from './util.js';
+const getData = (onSuccess) => {
+  fetch('https://25.javascript.pages.academy/kekstagram/data')
+    .then((response) =>
+      response.json())
+    .then((pictures) => {
+      onSuccess(pictures);
     })
     .catch(() => {
-      throw new Error(errorText);
+      showAlert('Не удалось загрузить изображения с сервера');
     });
+};
 
-const getData = () => load(Route.GET_DATA, ServerErrorText.GET_DATA);
+const sendData = (onSuccess, onFail, body) => {
+  fetch(
+    'https://25.javascript.pages.academy/kekstagram',
+    {
+      method: 'POST',
+      body,
+    },
+  )
+    .then((response) => {
+      if (response.ok) {
+        onSuccess();
+      } else {
+        onFail('Не удалось отправить форму. Попробуйте ещё раз');
+      }
+    })
+    .catch(() => {
+      onFail('Не удалось отправить форму. Попробуйте ещё раз');
+    });
+};
 
-const sendData = (body) => load(Route.SEND_DATA, ServerErrorText.SEND_DATA, Method.POST, body);
-
-export { getData, sendData };
+export {getData, sendData};
